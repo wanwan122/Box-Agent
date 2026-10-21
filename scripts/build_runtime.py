@@ -184,6 +184,8 @@ def pyinstaller_hidden_imports(*, external_python_sandbox: bool = False) -> list
         "box_agent.mcp_servers",
         "box_agent.mcp_servers.web_extract",
         "box_agent.mcp_servers.web_extract_server",
+        "box_agent.mcp_servers.cua_adapter",
+        "box_agent.mcp_servers.cua_server",
         "box_agent.retry",
         "box_agent.schema",
         "box_agent.tools",

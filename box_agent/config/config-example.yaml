@@ -33,6 +33,7 @@ provider: "anthropic"
 # plugins:
 #   cua:
 #     server_name: computer-use
+#     tool_interface: driver # Use app on macOS for 11 App tools (get_app/get_state/click...).
 #     feed_screenshots: true
 #     persist_images: true
 #     runtime:

@@ -52,6 +52,30 @@ plugins:
 - 报错结果仍保留结构化诊断信息，但保持失败状态、不注入图片。模型需刷新目标状态后再操作，不能把失败观察当成有效操作依据。
 - 退出 CLI 清理自己启动的 daemon；external 模式不停止宿主 daemon。两种模式都不会停止其他应用的进程。
 
+## macOS App 工具接口
+
+默认 `tool_interface: driver` 保持官方 Driver 原生工具。macOS 可显式选择 `app`，把模型侧接口收敛为 11 个工具：`list_apps`、`get_app`、`list_windows`、`get_state`、`click`、`drag`、`scroll`、`set_value`、`type_text`、`paste`、`press_key`。不需要安装或调用 mac-cua 包、JavaScript REPL，也不需要修改 Driver。
+
+```yaml
+plugins:
+  cua:
+    tool_interface: app
+    runtime:
+      enabled: true
+      mode: standalone
+      driver_path: /Applications/CuaDriver.app/Contents/MacOS/cua-driver
+```
+
+本分支选择 mac-cua `dev/codex_v1.0@fe6f3af` 的 CuaDriver **0.25.0 前台调用基线**。上述路径必须指向操作者已安装的 0.25.0 可执行文件，先用 `--version` 核对；本改动不改变主线安装器默认版本，不自动下载或降级系统 Driver。截图沿用早期基线的激活校验，输入前聚焦目标，不提供后台焦点 helper。版本范围和验证边界见 [0.25.0 前台适配说明](CUA_APP_025_FOREGROUND.md)。桌面宿主仍通过 `BOX_AGENT_CUA_RUNTIME_CONFIG` 提供 external runtime 身份，配置 `tool_interface: app` 不覆盖宿主路径或 endpoint。
+
+调用 `ensure_cua_ready` 后用 `tool_search` 发现 App 工具，并读取 `mac-cua` skill。先 `get_app(app="Microsoft Word")`，再对同一 app 调用 `get_state` 等工具。截图与 AX 元素来自适配器当前观察，原生 window/snapshot/token 和 App 元素编号不可混用。
+
+两种工具接口共用主线已有生命周期管理，App MCP 只连接已选定的 socket，不启动或停止 daemon。相同服务名和 runtime 下不能同时注册不同工具接口；需要切换时结束当前 Box-Agent 进程，再用新的配置启动。不要手工添加另一个 App MCP 来绕过托管配置冲突。
+
+关闭 App MCP 时仅结束自己的 Driver session/连接；external daemon 继续由宿主负责。冻结 runtime 使用 `--cua-mcp` 分发到同一 App 服务，Python 安装同时提供 `box-agent-cua-mcp` 入口。回退方式是把 `tool_interface` 改回 `driver` 并重启 Box-Agent。
+
+此移植保留已有窗口和输入策略，不宣称修复所有 Office GUI 问题：历史轨迹曾出现独立文件弹窗已被 AX 验证、最终却返回 Word 首页的偶发错选；无 AXPress 元素的单击目前仍可能转换为截图像素点击。原始 Office 成绩对应移植前的测试包，不能作为新主线包的 GUI 验收。
+
 ## 模型识别和图片注入
 
 插件不会仅因为模型名称看起来像视觉模型就无条件发送图片。它按以下顺序读取模型的图片输入能力：

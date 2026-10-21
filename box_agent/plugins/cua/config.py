@@ -30,6 +30,7 @@ class CuaConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     server_name: str = Field(default="computer-use", min_length=1)
+    tool_interface: Literal["driver", "app"] = "driver"
     feed_screenshots: bool = True
     persist_images: bool = True
     runtime: CuaRuntimeConfig | None = None

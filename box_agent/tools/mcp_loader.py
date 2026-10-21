@@ -2182,7 +2182,8 @@ _cua_service = None  # Owned with the existing process-wide MCP registry; closed
 def register_cua_service(service):
     global _cua_service
     if _cua_service is not None and _cua_service is not service:
-        if _cua_service.name == service.name and _cua_service.config == service.config:
+        if (_cua_service.name == service.name and _cua_service.config == service.config
+                and _cua_service.settings.tool_interface == service.settings.tool_interface):
             service.adapter.cleanup()
             return _cua_service
         raise RuntimeError("CUA runtime is already registered")

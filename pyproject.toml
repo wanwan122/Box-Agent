@@ -41,6 +41,7 @@ box-agent = "box_agent.cli:main"
 box-agent-acp = "box_agent.acp.server:main"
 box-agent-build-runtime = "box_agent.build_runtime_cli:main"
 box-agent-web-extract-mcp = "box_agent.mcp_servers.web_extract_server:main"
+box-agent-cua-mcp = "box_agent.mcp_servers.cua_server:main"
 
 [project.urls]
 Homepage = "https://github.com/Raccoon-Office/Box-Agent"

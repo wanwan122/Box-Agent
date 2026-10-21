@@ -39,6 +39,7 @@ BUILTIN_SKILL_NAMES: frozenset[str] = frozenset(
     {
         "browser-use",
         "computer-use",
+        "mac-cua",
         "data-dashboard",
         "docx",
         "html-templates",
